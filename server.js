@@ -17,9 +17,9 @@ const db = mysql.createConnection(
   console.log(`Connected to the tracker_db database.`)
 );
 
-db.query('SELECT * FROM department', function (err, results){
-    console.table(results);
-});
+// db.query('SELECT * FROM department', function (err, results){
+//     console.table(results);
+// });
 
 // app.get("/api/movies",(req,res)=>{
 //     db.query("SELECT * FROM movies",(err,data)=>{

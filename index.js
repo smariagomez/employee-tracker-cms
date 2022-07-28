@@ -3,6 +3,7 @@ const cTable = require('console.table');
 const express = require('express');
 const mysql = require('mysql2');
 const app = express()
+const Department = require('./lib/Department');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -68,7 +69,9 @@ const addDepartment = () => {
             name: "departmentName",
         },
     ]).then(ans => {
+        db.query("INSERT INTO department(name) VALUES(?)", [ans.departmentName], function (err, results){
         initialQuestions()
+    })
     })
 }
 
@@ -86,12 +89,14 @@ const addRole = () => {
         },
         {
             type: "list",
-            message: "Which department does the role belong to?",
-            choices: ["Engineering", "Finance", "Legal", "Sales"],
+            message: "Which department does the role belong to? Engineering -1, Finance-2, Legal-3, Sales-4",
+            choices: ["1", "2", "3", "4"],
             name: "roleDepartment"
         }
     ]).then(ans => {
-        initialQuestions()
+        db.query("INSERT INTO role (title, salary, department_id) VALUES(?,?,?)", [ans.roleName,ans.roleSalary,ans.roleDepartment], function (err, results){
+            initialQuestions()
+        })
     })
 }
 
