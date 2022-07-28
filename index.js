@@ -1,21 +1,21 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const express = require('express');
+const mysql = require('mysql2');
+const app = express()
 
-// console.table([
-//   {
-//     name: 'foo',
-//     age: 10
-//   }, {
-//     name: 'bar',
-//     age: 20
-//   }
-// ]);
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-// // prints
-// name  age
-// ----  ---
-// foo   10
-// bar   20
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'tracker_db'
+    },
+    console.log(`Connected to the tracker_db database.`)
+);
 
 const initialQuestions = () => {
     inquirer.prompt([
@@ -27,31 +27,122 @@ const initialQuestions = () => {
         }
     ]).then(ans => {
         if (ans.starter === 'View all departments') {
-            console.log("You have selected to view all departments")
-            //console.table([
-
-            //{
-
-            // }
-            //])
+            db.query('SELECT * FROM department', function (err, results) {
+                console.table(results);
+                initialQuestions()
+            });
         } else if (ans.starter === 'View all roles') {
-            console.log("You have selected to view all roles")
+            db.query('SELECT * FROM role', function (err, results) {
+                console.table(results);
+                initialQuestions()
+            });
         } else if (ans.starter === 'View all employees') {
-            console.log("You have selected to view all employees")
+            db.query('SELECT * FROM employee', function (err, results) {
+                console.table(results);
+                initialQuestions()
+            });
         } else if (ans.starter === 'Add a department') {
-            console.log("You have selected to add a department")
-        } else if (ans.starter === 'Add a role') {
-            console.log("You have selected to add a role")
-        } else if (ans.starter === 'Add an employee') {
-            console.log("You have selected to add an employee")
-        } else if (ans.starter === 'Update an employee') {
-            console.log("You have selected to update an employee")
-        } else {
-            console.log("You have selected to quit.");
-            //     internQuestions()
+            addDepartment()
 
+        } else if (ans.starter === 'Add a role') {
+            addRole()
+
+        } else if (ans.starter === 'Add an employee') {
+            addEmployee()
+
+        } else if (ans.starter === 'Update an employee role') {
+            updateEmployee()
+
+        } else if (ans.starter === 'Quit') {
+            console.log("You have selected to quit.");
         }
 
     })
 }
+
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the dpartment you would like to add?",
+            name: "departmentName",
+        },
+    ]).then(ans => {
+        initialQuestions()
+    })
+}
+
+const addRole = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the role?",
+            name: "roleName",
+        },
+        {
+            type: "input",
+            message: "What is the salary of the role?",
+            name: "roleSalary",
+        },
+        {
+            type: "list",
+            message: "Which department does the role belong to?",
+            choices: ["Engineering", "Finance", "Legal", "Sales"],
+            name: "roleDepartment"
+        }
+    ]).then(ans => {
+        initialQuestions()
+    })
+}
+
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name?",
+            name: "firstName"
+        },
+        {
+            type: "input",
+            message: "What is the employee's last name?",
+            name: "lastName"
+        },
+        {
+            type: "list",
+            message: "What is the employee's role?",
+            choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
+            name: "employeeRole"
+        },
+        {
+            type: "list",
+            message: "Who is the employee's manager?",
+            choices: ["John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunak Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+            name: "employeeManager"
+        }
+        ]).then(ans => {
+                initialQuestions()
+            })
+
+}
+
+const updateEmployee = () => {
+    inquirer.prompt ([
+        {
+            type: "list",
+            message: "Which employee's role do you want to update?",
+            choices: ["John Doe", "Mike Chan", "Ashely Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+            name: "updatedEmployee"
+        },
+        {
+            type: "list",
+            message: "Which role do you want to assign the selected employee?",
+            choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
+            name: "updatedRole"
+        }
+    ]).then(ans => {
+        initialQuestions()
+    })
+}
+
+
 initialQuestions()
