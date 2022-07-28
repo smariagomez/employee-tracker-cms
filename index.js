@@ -5,8 +5,6 @@ const mysql = require('mysql2');
 const app = express()
 const Department = require('./lib/Department');
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 const db = mysql.createConnection(
     {
@@ -69,9 +67,9 @@ const addDepartment = () => {
             name: "departmentName",
         },
     ]).then(ans => {
-        db.query("INSERT INTO department(name) VALUES(?)", [ans.departmentName], function (err, results){
-        initialQuestions()
-    })
+        db.query("INSERT INTO department(name) VALUES(?)", [ans.departmentName], function (err, results) {
+            initialQuestions()
+        })
     })
 }
 
@@ -94,7 +92,7 @@ const addRole = () => {
             name: "roleDepartment"
         }
     ]).then(ans => {
-        db.query("INSERT INTO role (title, salary, department_id) VALUES(?,?,?)", [ans.roleName,ans.roleSalary,ans.roleDepartment], function (err, results){
+        db.query("INSERT INTO role (title, salary, department_id) VALUES(?,?,?)", [ans.roleName, ans.roleSalary, ans.roleDepartment], function (err, results) {
             initialQuestions()
         })
     })
@@ -114,28 +112,30 @@ const addEmployee = () => {
         },
         {
             type: "list",
-            message: "What is the employee's role?",
-            choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead", "Lawyer"],
+            message: "What is the employee's role? Sales Lead-1, Salesperson-2, Lead Engineer-3, Software Engineer-4, Account Manager-5, Accountant-6, Legal Team Lead-7, Lawyer-8",
+            choices: ["1", "2", "3", "4", "5", "6", "7", "8"],
             name: "employeeRole"
         },
         {
             type: "list",
-            message: "Who is the employee's manager?",
-            choices: ["John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunak Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+            message: "Who is the employee's manager? John Doe -1, Mike Chan-2, Ashley Rodriguez-3, Kevin Tupik-4, Kunak Singh-5, Malia Brown-6, Sarah Lourd-7, Tom Allen-8",
+            choices: ["1", "2", "3", "4", "5", "6", "7", "8"],
             name: "employeeManager"
         }
-        ]).then(ans => {
-                initialQuestions()
-            })
+    ]).then(ans => {
+        db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)", [ans.firstName, ans.lastName, ans.employeeRole, ans.employeeManager], function (err, results) {
+            initialQuestions()
+        })
+    })
 
 }
 
 const updateEmployee = () => {
-    inquirer.prompt ([
+    inquirer.prompt([
         {
             type: "list",
-            message: "Which employee's role do you want to update?",
-            choices: ["John Doe", "Mike Chan", "Ashely Rodriguez", "Kevin Tupik", "Kunal Singh", "Malia Brown", "Sarah Lourd", "Tom Allen"],
+            message: "Which employee's role do you want to update? John Doe -1, Mike Chan-2, Ashley Rodriguez-3, Kevin Tupik-4, Kunal Singh-5, Malia Brown-6, Sarah Lourd-7, Tom Allen-8",
+            choices: ["1", "2", "3", "4", "5", "6", "7", "8"],
             name: "updatedEmployee"
         },
         {
@@ -146,8 +146,13 @@ const updateEmployee = () => {
         }
     ]).then(ans => {
         initialQuestions()
-    })
+   
+     })
 }
 
 
 initialQuestions()
+
+ //     // db.query("UPDATE employee SET role_id [ans.updatedRole] WHERE [ans.updatedEmployee]"),function (err, results) {
+    //         initialQuestions()
+    //     }
