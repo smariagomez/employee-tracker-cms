@@ -24,7 +24,7 @@
   Walkthrough video tutorial: https://drive.google.com/file/d/1kOdV_WXgbzz6P-YDh_6p8keZYT6d_E4F/view
       
   ## Credits
- npm mysql, node.js
+ Inquirer package, MySQL2 package, console.table package
   
   ## Contributing
    Please review the [Contributor Covenant](https://www.contributor-covenant.org/) for guidlines on how to contribute to this application.
